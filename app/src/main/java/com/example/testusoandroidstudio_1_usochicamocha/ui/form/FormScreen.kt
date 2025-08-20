@@ -10,13 +10,20 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.*
@@ -27,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.FileProvider
@@ -291,17 +299,34 @@ fun ExtinguisherDatePicker(
     selectedDate: String,
     onDateSelected: (year: Int, month: Int) -> Unit
 ) {
-    val context = LocalContext.current
     val calendar = Calendar.getInstance()
-    val year = selectedDate.substringBefore("-").toIntOrNull() ?: calendar.get(Calendar.YEAR)
-    val month = selectedDate.substringAfter("-").toIntOrNull()?.minus(1) ?: calendar.get(Calendar.MONTH)
 
-    val datePickerDialog = DatePickerDialog(
-        context,
-        { _: DatePicker, selectedYear: Int, selectedMonth: Int, _: Int ->
-            onDateSelected(selectedYear, selectedMonth)
-        }, year, month, calendar.get(Calendar.DAY_OF_MONTH)
-    )
+    // Parsea la fecha actual o usa la de hoy como respaldo
+    val (initialYear, initialMonth) = remember(selectedDate) {
+        if (selectedDate.contains("-")) {
+            val parts = selectedDate.split("-")
+            Pair(
+                parts[0].toIntOrNull() ?: calendar.get(Calendar.YEAR),
+                (parts[1].toIntOrNull()?.minus(1)) ?: calendar.get(Calendar.MONTH)
+            )
+        } else {
+            Pair(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH))
+        }
+    }
+
+    var showDialog by remember { mutableStateOf(false) }
+
+    if (showDialog) {
+        MonthYearPickerDialog(
+            onDismissRequest = { showDialog = false },
+            onDateSelected = { year, month ->
+                onDateSelected(year, month)
+                showDialog = false
+            },
+            initialYear = initialYear,
+            initialMonth = initialMonth
+        )
+    }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text("Vigencia EXTINTOR", style = MaterialTheme.typography.titleMedium)
@@ -311,12 +336,96 @@ fun ExtinguisherDatePicker(
             readOnly = true,
             label = { Text("Fecha de Vencimiento (YYYY-MM)") },
             trailingIcon = {
-                IconButton(onClick = { datePickerDialog.show() }) {
+                IconButton(onClick = { showDialog = true }) {
                     Icon(Icons.Default.DateRange, contentDescription = "Seleccionar Fecha")
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { showDialog = true } // Hace que todo el campo sea clickeable
         )
+    }
+}
+
+// ======================= NUEVO COMPOSABLE AÑADIDO =======================
+
+// ======================= CÓDIGO MODIFICADO AQUÍ =======================
+@Composable
+fun MonthYearPickerDialog(
+    onDismissRequest: () -> Unit,
+    onDateSelected: (year: Int, month: Int) -> Unit,
+    initialYear: Int,
+    initialMonth: Int
+) {
+    var selectedYear by remember { mutableStateOf(initialYear) }
+    val months = listOf(
+        "Ene", "Feb", "Mar", "Abr", "May", "Jun",
+        "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
+    )
+
+    Dialog(onDismissRequest = onDismissRequest) {
+        // Tarjeta más ancha y con esquinas más redondeadas
+        Card(
+            modifier = Modifier.width(400.dp),
+            shape = RoundedCornerShape(24.dp)
+        ) {
+            Column(
+                // Más padding interno para dar más espacio
+                modifier = Modifier.padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Selector de Año
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = { selectedYear-- }) {
+                        Icon(Icons.Default.KeyboardArrowLeft, contentDescription = "Año anterior")
+                    }
+                    Text(
+                        text = selectedYear.toString(),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                    IconButton(onClick = { selectedYear++ }) {
+                        Icon(Icons.Default.KeyboardArrowRight, contentDescription = "Año siguiente")
+                    }
+                }
+
+                Spacer(Modifier.height(20.dp))
+
+                // Grilla para seleccionar el Mes (3 columnas, 4 filas)
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3), // CAMBIO: 3 columnas
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    itemsIndexed(months) { index, month ->
+                        val isSelected = (selectedYear == initialYear && index == initialMonth)
+                        OutlinedButton(
+                            onClick = {
+                                onDateSelected(selectedYear, index) // El mes es el índice (0-11)
+                                onDismissRequest()
+                            },
+                            // Botones con altura fija para consistencia
+                            modifier = Modifier.height(56.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = if (isSelected) {
+                                ButtonDefaults.outlinedButtonColors(
+                                    containerColor = MaterialTheme.colorScheme.primary,
+                                    contentColor = MaterialTheme.colorScheme.onPrimary
+                                )
+                            } else {
+                                ButtonDefaults.outlinedButtonColors()
+                            }
+                        ) {
+                            Text(text = month, style = MaterialTheme.typography.bodyLarge)
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 

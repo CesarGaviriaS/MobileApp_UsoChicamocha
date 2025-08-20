@@ -14,13 +14,12 @@ import retrofit2.http.POST
 // Interfaz que define todos los endpoints de nuestro backend.
 interface ApiService {
 
-    @POST("login")
+    @POST("auth/login")
     suspend fun login(@Body request: LoginRequest): Response<LoginResponse>
-    @POST("token/refresh")
+    @POST("auth/token/refresh")
     suspend fun refreshToken(@Body request: RefreshTokenRequest): Response<NewAccessTokenResponse>
-    @GET("machines")
+    @GET("machine")
     suspend fun getMachines(): Response<List<MachineDto>>
-    // --- ENDPOINT AÑADIDO PARA SINCRONIZAR FORMULARIOS ---
-    @POST("inspections") // O la ruta que defina tu backend
+    @POST("inspection")
     suspend fun syncForm(@Body form: FormDto): Response<Unit>
 }

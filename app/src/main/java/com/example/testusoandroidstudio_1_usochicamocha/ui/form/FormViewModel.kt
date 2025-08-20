@@ -21,29 +21,28 @@ import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
 
-// Estado de la UI para la pantalla del formulario
 data class FormUiState(
     val horometro: String = "",
     val observaciones: String = "",
-    val estadoFugas: String = "Óptimo",
-    val estadoFrenos: String = "Óptimo",
-    val estadoCorreasPoleas: String = "Óptimo",
-    val estadoLlantasCarriles: String = "Óptimo",
-    val estadoEncendido: String = "Óptimo",
-    val estadoElectrico: String = "Óptimo",
-    val estadoMecanico: String = "Óptimo",
-    val estadoTemperatura: String = "Óptimo",
-    val estadoAceite: String = "Óptimo",
-    val estadoHidraulico: String = "Óptimo",
-    val estadoRefrigerante: String = "Óptimo",
-    val estadoEstructural: String = "Óptimo",
-    val vigenciaExtintor: String = SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(Calendar.getInstance().time),
+    val estadoFugas: String = "",
+    val estadoFrenos: String = "",
+    val estadoCorreasPoleas: String = "",
+    val estadoLlantasCarriles: String = "",
+    val estadoEncendido: String = "",
+    val estadoElectrico: String = "",
+    val estadoMecanico: String = "",
+    val estadoTemperatura: String = "",
+    val estadoAceite: String = "",
+    val estadoHidraulico: String = "",
+    val estadoRefrigerante: String = "",
+    val estadoEstructural: String = "",
+    val vigenciaExtintor: String = "",
 
     val previewingImageUri: Uri? = null,
     val selectedImageUris: List<Uri> = emptyList(),
     val machines: List<Machine> = emptyList(),
     val selectedMachine: Machine? = null,
-    val saveCompleted: Boolean = false // La bandera que controla la navegación
+    val saveCompleted: Boolean = false
 )
 
 @HiltViewModel
@@ -78,12 +77,10 @@ class FormViewModel @Inject constructor(
 
 
     fun onExtinguisherDateChange(year: Int, month: Int) {
-        // El mes en Calendar va de 0 a 11, por eso sumamos 1.
         val formattedMonth = String.format("%02d", month + 1)
         _uiState.update { it.copy(vigenciaExtintor = "$year-$formattedMonth") }
     }
 
-    // --- MÉTODOS AÑADIDOS/MODIFICADOS PARA LA PREVISUALIZACIÓN ---
     fun onImageSelected(uri: Uri) {
         _uiState.update { it.copy(selectedImageUris = it.selectedImageUris + uri) }
     }
@@ -92,7 +89,6 @@ class FormViewModel @Inject constructor(
         _uiState.update { currentState ->
             currentState.copy(
                 selectedImageUris = currentState.selectedImageUris.filter { it != uri },
-                // Si la imagen que se borra es la que se está viendo, cierra el diálogo.
                 previewingImageUri = if (currentState.previewingImageUri == uri) null else currentState.previewingImageUri
             )
         }

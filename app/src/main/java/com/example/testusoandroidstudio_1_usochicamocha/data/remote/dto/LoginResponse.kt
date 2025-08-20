@@ -1,8 +1,23 @@
 package com.example.testusoandroidstudio_1_usochicamocha.data.remote.dto
+import com.google.gson.annotations.SerializedName
 
 data class LoginResponse(
+    @SerializedName("id")
+    val userId: Int,
+
+    @SerializedName("username")
+    val username: String,
+
+    @SerializedName("message")
     val message: String,
-    val accessToken: String?,
-    val refreshToken: String?,
-    val userId: Int?
+
+    @SerializedName("jwt")
+    val accessToken: String,
+
+    @SerializedName("refreshToken")
+    val refreshToken: String,
+
+    @SerializedName("status")
+    val status: Boolean
 )
+

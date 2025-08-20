@@ -42,7 +42,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    private const val BASE_URL = "https://pdxs8r4k-8000.use2.devtunnels.ms/"
+    private const val BASE_URL = "https://pdxs8r4k-8080.use2.devtunnels.ms/"+"api/v1/"
 
     @Provides
     @Singleton
@@ -84,7 +84,7 @@ object AppModule {
     fun provideSyncMachinesUseCase(machineRepository: MachineRepository, logger: AppLogger): SyncMachinesUseCase {
         return SyncMachinesUseCase(machineRepository, logger)
     }
-    // --- PROVEEDOR CORREGIDO ---
+
     @Provides
     @Singleton
     fun provideValidateSessionUseCase(

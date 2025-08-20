@@ -4,12 +4,13 @@ import com.example.testusoandroidstudio_1_usochicamocha.data.local.entity.Machin
 import com.google.gson.annotations.SerializedName
 
 data class MachineDto(
+    @SerializedName("id")
     val id: Int,
+    @SerializedName("name")
     val nombre: String?,
+    @SerializedName("brand")
     val modelo: String?,
-    // Usamos @SerializedName para mapear el nombre de la columna de la BD
-    // al nombre de la variable en Kotlin.
-    @SerializedName("num_inter_identificacion")
+    @SerializedName("numInterIdentification")
     val identifier: String?
 )
 
@@ -18,6 +19,6 @@ fun MachineDto.toEntity(): MachineEntity {
         id = id,
         name = nombre ?: "Sin Nombre",
         model = modelo ?: "N/A",
-        identifier = identifier ?: "Sin ID" // <-- AÑADIDO
+        identifier = identifier ?: "Sin ID"
     )
 }
