@@ -46,7 +46,7 @@ class FormRepositoryImpl @Inject constructor(
 
             if (response.isSuccessful) {
                 // 3. Si la API responde OK, marcamos el formulario como sincronizado en la BD local.
-                formDao.markAsSynced(form.uuid)
+                formDao.markAsSynced(form.UUID)
                 Result.success(Unit)
             } else {
                 // Si la API responde con un error (4xx, 5xx), devolvemos un fallo.
@@ -59,31 +59,30 @@ class FormRepositoryImpl @Inject constructor(
     }
 
     private fun Form.toDto(): FormDto {
-        // El servidor espera la fecha en formato ISO 8601 (UTC).
-        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
-        sdf.timeZone = TimeZone.getTimeZone("America/Bogota") // <-- La línea clave
+        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        sdf.timeZone = TimeZone.getTimeZone("UTC")
         val isoDateString = sdf.format(Date(this.timestamp))
 
         return FormDto(
-            uuid = this.uuid,
+            UUID = this.UUID,
             dateStamp = isoDateString,
-            usuarioId = this.usuarioId,
-            equipoId = this.equipoId,
-            horometro = this.horometro,
-            estadoFugas = this.estadoFugas,
-            estadoFrenos = this.estadoFrenos,
-            estadoCorreasPoleas = this.estadoCorreasPoleas,
-            estadoLlantasCarriles = this.estadoLlantasCarriles,
-            estadoEncendido = this.estadoEncendido,
-            estadoElectrico = this.estadoElectrico,
-            estadoMecanico = this.estadoMecanico,
-            estadoTemperatura = this.estadoTemperatura,
-            estadoAceite = this.estadoAceite,
-            estadoHidraulico = this.estadoHidraulico,
-            estadoRefrigerante = this.estadoRefrigerante,
-            estadoEstructural = this.estadoEstructural,
-            vigenciaExtintor = this.vigenciaExtintor,
-            observaciones = this.observaciones
+            hourmeter = this.hourmeter,
+            leakStatus = this.leakStatus,
+            brakeStatus = this.brakeStatus,
+            beltsPulleysStatus = this.beltsPulleysStatus,
+            tireLanesStatus = this.tireLanesStatus,
+            carIgnitionStatus = this.carIgnitionStatus,
+            electricalStatus = this.electricalStatus,
+            mechanicalStatus = this.mechanicalStatus,
+            temperatureStatus = this.temperatureStatus,
+            oilStatus = this.oilStatus,
+            hydraulicStatus = this.hydraulicStatus,
+            coolantStatus = this.coolantStatus,
+            structuralStatus = this.structuralStatus,
+            expirationDateFireExtinguisher = this.expirationDateFireExtinguisher,
+            observations = this.observations,
+            userId = this.userId,
+            machineId = this.machineId
         )
     }
 }

@@ -44,6 +44,7 @@ object AppModule {
 
     private const val BASE_URL = "https://pdxs8r4k-8080.use2.devtunnels.ms/"+"api/v1/"
 
+
     @Provides
     @Singleton
     fun provideApiService(tokenAuthenticator: TokenAuthenticator, authInterceptor: AuthInterceptor): ApiService {

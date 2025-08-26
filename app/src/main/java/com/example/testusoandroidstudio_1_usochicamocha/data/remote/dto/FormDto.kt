@@ -1,66 +1,64 @@
 package com.example.testusoandroidstudio_1_usochicamocha.data.remote.dto
 
-import com.squareup.moshi.Json
+// Asumiendo Moshi, si usas Gson, las anotaciones @field:Json serían @SerializedName
+import com.squareup.moshi.Json // Para Moshi
+// import com.google.gson.annotations.SerializedName // Para Gson
 
-// Esta data class representa el JSON que enviaremos al servidor.
-// Los nombres de las propiedades deben coincidir con lo que el backend espera.
 data class FormDto(
-    @field:Json(name = "uuid")
-    val uuid: String,
+    @field:Json(name = "UUID") // El backend espera "UUID" en mayúsculas
+    val UUID: String,
 
-    @field:Json(name = "date_stamp")
-    val dateStamp: String,
-
-    // --- CAMBIO AQUÍ ---
-    // Ajustado para reflejar la nueva estructura de la tabla 'usuarios'.
-    @field:Json(name = "usuario_id")
-    val usuarioId: Int,
-
-    @field:Json(name = "equipos_id")
-    val equipoId: Int,
+    @field:Json(name = "dateStamp")
+    val dateStamp: String, // Formato ISO 8601 UTC, ej: "2025-08-26T14:15:39.072Z"
 
     @field:Json(name = "hourmeter")
-    val horometro: Double,
+    val hourmeter: String,
 
-    @field:Json(name = "estado_fugas")
-    val estadoFugas: String,
+    @field:Json(name = "leakStatus")
+    val leakStatus: String,
 
-    @field:Json(name = "estado_frenos")
-    val estadoFrenos: String,
+    @field:Json(name = "brakeStatus")
+    val brakeStatus: String,
 
-    @field:Json(name = "estado_correas_poleas")
-    val estadoCorreasPoleas: String,
+    @field:Json(name = "beltsPulleysStatus")
+    val beltsPulleysStatus: String,
 
-    @field:Json(name = "estado_llantas_carriles")
-    val estadoLlantasCarriles: String,
+    @field:Json(name = "tireLanesStatus")
+    val tireLanesStatus: String,
 
-    @field:Json(name = "estado_encendido")
-    val estadoEncendido: String,
+    @field:Json(name = "carIgnitionStatus")
+    val carIgnitionStatus: String,
 
-    @field:Json(name = "estado_electrico")
-    val estadoElectrico: String,
+    @field:Json(name = "electricalStatus")
+    val electricalStatus: String,
 
-    @field:Json(name = "estado_mecanico")
-    val estadoMecanico: String,
+    @field:Json(name = "mechanicalStatus")
+    val mechanicalStatus: String,
 
-    @field:Json(name = "estado_temperatura")
-    val estadoTemperatura: String,
+    @field:Json(name = "temperatureStatus")
+    val temperatureStatus: String,
 
-    @field:Json(name = "estado_aceite")
-    val estadoAceite: String,
+    @field:Json(name = "oilStatus")
+    val oilStatus: String,
 
-    @field:Json(name = "estado_hidraulico")
-    val estadoHidraulico: String,
+    @field:Json(name = "hydraulicStatus")
+    val hydraulicStatus: String,
 
-    @field:Json(name = "estado_refrigerante")
-    val estadoRefrigerante: String,
+    @field:Json(name = "coolantStatus")
+    val coolantStatus: String,
 
-    @field:Json(name = "estado_estructural")
-    val estadoEstructural: String,
+    @field:Json(name = "structuralStatus")
+    val structuralStatus: String,
 
-    @field:Json(name = "vigencia_extintor")
-    val vigenciaExtintor: String,
+    @field:Json(name = "expirationDateFireExtinguisher")
+    val expirationDateFireExtinguisher: String,
 
-    @field:Json(name = "observaciones")
-    val observaciones: String
+    @field:Json(name = "observations")
+    val observations: String,
+
+    @field:Json(name = "userId")
+    val userId: Long,
+
+    @field:Json(name = "machineId")
+    val machineId: Long
 )

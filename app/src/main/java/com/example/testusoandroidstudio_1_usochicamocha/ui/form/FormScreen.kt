@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
@@ -34,8 +35,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -121,7 +124,6 @@ fun FormScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Dropdown para seleccionar la máquina
             item {
                 MachineSelector(
                     machines = uiState.machines,
@@ -129,29 +131,51 @@ fun FormScreen(
                     onMachineSelected = { viewModel.onMachineSelected(it) }
                 )
             }
+            item { Divider(modifier = Modifier.padding(vertical = 8.dp)) }
 
-            item {
-                OutlinedTextField(
-                    value = uiState.horometro,
-                    onValueChange = { viewModel.onHorometroChange(it) },
-                    label = { Text("Escriba el HOROMETRO Actual") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
+
+
+                    item {
+                        OutlinedTextField(
+                            value = uiState.horometro,
+                            onValueChange = { newValue ->
+                                if (newValue.all { it.isDigit() }) {
+                                    viewModel.onHorometroChange(newValue)
+                                }
+                            },
+                            label = { Text("Escriba el HOROMETRO Actual", fontWeight = FontWeight.Bold, fontSize = 17.sp) },
+                            modifier = Modifier.fillMaxWidth(),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                        )
+                    }
+
+            item { Divider(modifier = Modifier.padding(vertical = 8.dp)) }
 
             // --- Lista completa de todos los StatusSelector ---
             item { StatusSelector("Fugas en el Sistema", uiState.estadoFugas) { viewModel.onEstadoChange("Fugas", it) } }
+            item { Divider(modifier = Modifier.padding(vertical = 8.dp)) }
             item { StatusSelector("Sistema de Frenos", uiState.estadoFrenos) { viewModel.onEstadoChange("Frenos", it) } }
+            item { Divider(modifier = Modifier.padding(vertical = 8.dp)) }
             item { StatusSelector("Estado de Correas y Poleas", uiState.estadoCorreasPoleas) { viewModel.onEstadoChange("CorreasPoleas", it) } }
+            item { Divider(modifier = Modifier.padding(vertical = 8.dp)) }
             item { StatusSelector("Estado de Llantas y/o Carriles", uiState.estadoLlantasCarriles) { viewModel.onEstadoChange("LlantasCarriles", it) } }
+            item { Divider(modifier = Modifier.padding(vertical = 8.dp)) }
             item { StatusSelector("Sistema de Encendido", uiState.estadoEncendido) { viewModel.onEstadoChange("Encendido", it) } }
+            item { Divider(modifier = Modifier.padding(vertical = 8.dp)) }
             item { StatusSelector("Sistema Eléctrico en General", uiState.estadoElectrico) { viewModel.onEstadoChange("Electrico", it) } }
+            item { Divider(modifier = Modifier.padding(vertical = 8.dp)) }
             item { StatusSelector("Sistema Mecánico en General", uiState.estadoMecanico) { viewModel.onEstadoChange("Mecanico", it) } }
+            item { Divider(modifier = Modifier.padding(vertical = 8.dp)) }
             item { StatusSelector("Nivel de Temperatura", uiState.estadoTemperatura) { viewModel.onEstadoChange("Temperatura", it) } }
+            item { Divider(modifier = Modifier.padding(vertical = 8.dp)) }
             item { StatusSelector("Nivel de Aceite", uiState.estadoAceite) { viewModel.onEstadoChange("Aceite", it) } }
+            item { Divider(modifier = Modifier.padding(vertical = 8.dp)) }
             item { StatusSelector("Nivel de Hidraulico", uiState.estadoHidraulico) { viewModel.onEstadoChange("Hidraulico", it) } }
+            item { Divider(modifier = Modifier.padding(vertical = 8.dp)) }
             item { StatusSelector("Nivel de Refrigerante", uiState.estadoRefrigerante) { viewModel.onEstadoChange("Refrigerante", it) } }
+            item { Divider(modifier = Modifier.padding(vertical = 8.dp)) }
             item { StatusSelector("Estado Estructural en General", uiState.estadoEstructural) { viewModel.onEstadoChange("Estructural", it) } }
+            item { Divider(modifier = Modifier.padding(vertical = 8.dp)) }
 
             item {
                 ExtinguisherDatePicker(
@@ -161,11 +185,13 @@ fun FormScreen(
                     }
                 )
             }
+            item { Divider(modifier = Modifier.padding(vertical = 8.dp)) }
+
             item {
                 OutlinedTextField(
                     value = uiState.observaciones,
                     onValueChange = { viewModel.onObservacionesChange(it) },
-                    label = { Text("Observaciones y/o Aspectos a Revisar") },
+                    label = { Text("Observaciones y/o Aspectos a Revisar", fontWeight = FontWeight.Bold, fontSize = 17.sp) },
                     modifier = Modifier.fillMaxWidth(),
                     minLines = 4
                 )
@@ -186,7 +212,7 @@ fun FormScreen(
                     modifier = Modifier.fillMaxWidth(),
                     enabled = uiState.selectedMachine != null
                 ) {
-                    Text("Guardar")
+                    Text("Guardar", fontSize = 18.sp, fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -209,7 +235,7 @@ fun MachineSelector(
     onMachineSelected: (Machine) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val displayText = selectedMachine?.let { "${it.name} - ${it.model} - ${it.identifier}" } ?: "Seleccione una máquina"
+    val displayText = selectedMachine?.let { "${it.name} - ${it.model} - ${it.internalIdentificationNumber}" } ?: "Seleccione una máquina"
 
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -219,7 +245,7 @@ fun MachineSelector(
             value = displayText,
             onValueChange = {},
             readOnly = true,
-            label = { Text("Máquina") },
+            label = { Text("Máquina", fontWeight = FontWeight.Bold, fontSize = 17.sp) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             modifier = Modifier
                 .menuAnchor()
@@ -234,7 +260,7 @@ fun MachineSelector(
                     text = {
                         Column {
                             Text(text = machine.name, style = MaterialTheme.typography.bodyLarge)
-                            Text(text = "Model: ${machine.model} - ID: ${machine.identifier}", style = MaterialTheme.typography.bodySmall)
+                            Text(text = "Model: ${machine.model} - ID: ${machine.internalIdentificationNumber}", style = MaterialTheme.typography.bodySmall)
                         }
                     },
                     onClick = {
@@ -255,7 +281,7 @@ fun StatusSelector(
 ) {
     val options = listOf("Óptimo", "Regular", "Malo")
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(label, style = MaterialTheme.typography.titleMedium)
+        Text(label, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, fontSize = 17.sp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -263,11 +289,13 @@ fun StatusSelector(
             options.forEach { option ->
                 val isSelected = option == selectedOption
                 val backgroundColor = when (option) {
-                    "Óptimo" -> Color(0xFF4CAF50)
-                    "Regular" -> Color(0xFFFFA000)
-                    "Malo" -> Color(0xFFD32F2F)
+                    "Óptimo" -> Color(0xFF4CAF50) // Verde
+                    "Regular" -> Color(0xFFFFA000) // Naranja
+                    "Malo" -> Color(0xFFD32F2F) // Rojo
                     else -> Color.Gray
                 }
+                // Color de texto blanco para los fondos de color, negro/gris oscuro para el fondo claro no seleccionado
+                val textColor = if (isSelected) Color.White else Color.Black
 
                 Surface(
                     modifier = Modifier
@@ -275,17 +303,18 @@ fun StatusSelector(
                         .height(48.dp)
                         .border(
                             width = 2.dp,
-                            color = if (isSelected) backgroundColor else Color.Transparent,
+                            color = if (isSelected) backgroundColor else Color.LightGray, // Borde más visible para no seleccionados
                             shape = RoundedCornerShape(8.dp)
                         )
                         .clickable { onOptionSelected(option) },
                     shape = RoundedCornerShape(8.dp),
-                    color = backgroundColor.copy(alpha = if (isSelected) 0.9f else 0.3f)
+                    color = if (isSelected) backgroundColor else backgroundColor.copy(alpha = 0.2f) // Fondo más claro para no seleccionados
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Text(
                             text = option,
-                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium, // Más peso para no seleccionados
+                            color = textColor
                         )
                     }
                 }
@@ -329,12 +358,12 @@ fun ExtinguisherDatePicker(
     }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("Vigencia EXTINTOR", style = MaterialTheme.typography.titleMedium)
+        Text("Vigencia EXTINTOR", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, fontSize = 17.sp))
         OutlinedTextField(
             value = selectedDate,
             onValueChange = {},
             readOnly = true,
-            label = { Text("Fecha de Vencimiento (YYYY-MM)") },
+            label = { Text("Fecha de Vencimiento (YYYY-MM)", fontWeight = FontWeight.Normal, fontSize = 16.sp) },
             trailingIcon = {
                 IconButton(onClick = { showDialog = true }) {
                     Icon(Icons.Default.DateRange, contentDescription = "Seleccionar Fecha")
@@ -347,9 +376,6 @@ fun ExtinguisherDatePicker(
     }
 }
 
-// ======================= NUEVO COMPOSABLE AÑADIDO =======================
-
-// ======================= CÓDIGO MODIFICADO AQUÍ =======================
 @Composable
 fun MonthYearPickerDialog(
     onDismissRequest: () -> Unit,
@@ -445,7 +471,7 @@ fun ImageUploadSection(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text("Subir imágenes", style = MaterialTheme.typography.titleLarge)
+            Text("Subir imágenes", style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)) // Título en negrita
 
             if (selectedImageUris.isNotEmpty()) {
                 LazyColumn(
@@ -526,7 +552,7 @@ fun ImagePreviewDialog(
             ) {
                 Text(
                     "Previsualización",
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold) // Título en negrita
                 )
                 Spacer(Modifier.height(8.dp))
 

@@ -6,52 +6,50 @@ import com.example.testusoandroidstudio_1_usochicamocha.domain.model.Form
 @Entity(tableName = "pending_forms")
 data class FormEntity(
     @PrimaryKey(autoGenerate = true) val localId: Int = 0,
-    val uuid: String,
-    val timestamp: Long,
-    val equipoId: Int,
-    val usuarioId: Int,
-    val horometro: Double,
-    val estadoFugas: String,
-    val estadoFrenos: String,
-    val estadoCorreasPoleas: String,
-    val estadoLlantasCarriles: String,
-    val estadoEncendido: String,
-    val estadoElectrico: String,
-    val estadoMecanico: String,
-    val estadoTemperatura: String,
-    val estadoAceite: String,
-    val estadoHidraulico: String,
-    val estadoRefrigerante: String,
-    val estadoEstructural: String,
-    val vigenciaExtintor: String,
-    val observaciones: String,
+    val UUID: String,
+    val timestamp: Long, // Fecha de creación local
+    val machineId: Long, // Anteriormente equipoId, tipo Long
+    val userId: Long,    // Anteriormente usuarioId, tipo Long
+    val hourmeter: String, // Anteriormente horometro, tipo String
+    val leakStatus: String, // Anteriormente estadoFugas
+    val brakeStatus: String, // Anteriormente estadoFrenos
+    val beltsPulleysStatus: String, // Anteriormente estadoCorreasPoleas
+    val tireLanesStatus: String, // Anteriormente estadoLlantasCarriles
+    val carIgnitionStatus: String, // Anteriormente estadoEncendido
+    val electricalStatus: String, // Anteriormente estadoElectrico
+    val mechanicalStatus: String, // Anteriormente estadoMecanico
+    val temperatureStatus: String, // Anteriormente estadoTemperatura
+    val oilStatus: String, // Anteriormente estadoAceite
+    val hydraulicStatus: String, // Anteriormente estadoHidraulico
+    val coolantStatus: String, // Anteriormente estadoRefrigerante
+    val structuralStatus: String, // Anteriormente estadoEstructural
+    val expirationDateFireExtinguisher: String, // Anteriormente vigenciaExtintor
+    val observations: String, // Anteriormente observaciones
     var isSynced: Boolean = false
 )
-
-// --- FUNCIÓN DE MAPEO AÑADIDA ---
-// ... (código de la data class FormEntity) ...
 
 fun FormEntity.toDomain(): Form {
     return Form(
         localId = localId,
-        uuid = this.uuid,
+        UUID = this.UUID,
         timestamp = timestamp,
-        equipoId = equipoId,
-        usuarioId = usuarioId,
-        horometro = horometro,
-        estadoFugas = estadoFugas,
-        estadoFrenos = estadoFrenos,
-        estadoCorreasPoleas = estadoCorreasPoleas,
-        estadoLlantasCarriles = estadoLlantasCarriles,
-        estadoEncendido = estadoEncendido,
-        estadoElectrico = estadoElectrico,
-        estadoMecanico = estadoMecanico,
-        estadoTemperatura = estadoTemperatura,
-        estadoAceite = estadoAceite,
-        estadoHidraulico = estadoHidraulico,
-        estadoRefrigerante = estadoRefrigerante,
-        estadoEstructural = estadoEstructural,
-        vigenciaExtintor = vigenciaExtintor,
-        observaciones = observaciones
+        machineId = machineId,
+        userId = userId,
+        hourmeter = hourmeter,
+        leakStatus = leakStatus,
+        brakeStatus = brakeStatus,
+        beltsPulleysStatus = beltsPulleysStatus,
+        tireLanesStatus = tireLanesStatus,
+        carIgnitionStatus = carIgnitionStatus,
+        electricalStatus = electricalStatus,
+        mechanicalStatus = mechanicalStatus,
+        temperatureStatus = temperatureStatus,
+        oilStatus = oilStatus,
+        hydraulicStatus = hydraulicStatus,
+        coolantStatus = coolantStatus,
+        structuralStatus = structuralStatus,
+        expirationDateFireExtinguisher = expirationDateFireExtinguisher,
+        observations = observations,
+        isSynced = isSynced
     )
 }

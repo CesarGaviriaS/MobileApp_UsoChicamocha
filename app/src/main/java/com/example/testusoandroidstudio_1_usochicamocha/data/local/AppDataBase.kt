@@ -11,7 +11,7 @@ import com.example.testusoandroidstudio_1_usochicamocha.data.local.entity.Machin
 
 @Database(
     entities = [FormEntity::class, MachineEntity::class, LogEntity::class], // <-- AÑADIMOS LogEntity
-    version = 5, // <-- INCREMENTAMOS LA VERSIÓN
+    version = 8, // <-- INCREMENTAMOS LA VERSIÓN
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

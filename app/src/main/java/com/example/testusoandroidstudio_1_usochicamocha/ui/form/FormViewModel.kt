@@ -132,12 +132,15 @@ class FormViewModel @Inject constructor(
             return // Salimos de la función
         }
         // Validación: Asegurarse de que se ha seleccionado una máquina.
-        val selectedMachineId = _uiState.value.selectedMachine?.id ?: return
+        // Asumimos que selectedMachine.id es Int y lo convertimos a Long para machineId
+        val selectedMachineId = _uiState.value.selectedMachine?.id?.toLong() ?: return
 
         viewModelScope.launch {
             Log.d("FormViewModel", "Iniciando guardado de formulario...")
             val currentState = _uiState.value
-            val currentUserId = tokenManager.getUserId().firstOrNull()
+            // Asumimos que tokenManager.getUserId() devuelve Flow<Int?> o similar,
+            // y lo convertimos a Long para userId.
+            val currentUserId = tokenManager.getUserId().firstOrNull()?.toLong()
 
             if (currentUserId == null) {
                 Log.e("FormViewModel", "Error: No se pudo obtener el ID del usuario.")
@@ -145,26 +148,27 @@ class FormViewModel @Inject constructor(
             }
 
             val form = Form(
-                localId = 0,
-                uuid = UUID.randomUUID().toString(),
+                localId = 0, // Generalmente autogenerado por la BD, o 0 para una nueva entidad no guardada.
+                UUID = UUID.randomUUID().toString(),
                 timestamp = System.currentTimeMillis(),
-                equipoId = selectedMachineId,
-                usuarioId = currentUserId,
-                horometro = currentState.horometro.toDoubleOrNull() ?: 0.0,
-                observaciones = currentState.observaciones,
-                estadoFugas = currentState.estadoFugas,
-                estadoFrenos = currentState.estadoFrenos,
-                estadoCorreasPoleas = currentState.estadoCorreasPoleas,
-                estadoLlantasCarriles = currentState.estadoLlantasCarriles,
-                estadoEncendido = currentState.estadoEncendido,
-                estadoElectrico = currentState.estadoElectrico,
-                estadoMecanico = currentState.estadoMecanico,
-                estadoTemperatura = currentState.estadoTemperatura,
-                estadoAceite = currentState.estadoAceite,
-                estadoHidraulico = currentState.estadoHidraulico,
-                estadoRefrigerante = currentState.estadoRefrigerante,
-                estadoEstructural = currentState.estadoEstructural,
-                vigenciaExtintor = currentState.vigenciaExtintor
+                machineId = selectedMachineId,
+                userId = currentUserId,
+                hourmeter = currentState.horometro,
+                observations = currentState.observaciones,
+                leakStatus = currentState.estadoFugas,
+                brakeStatus = currentState.estadoFrenos,
+                beltsPulleysStatus = currentState.estadoCorreasPoleas,
+                tireLanesStatus = currentState.estadoLlantasCarriles,
+                carIgnitionStatus = currentState.estadoEncendido,
+                electricalStatus = currentState.estadoElectrico,
+                mechanicalStatus = currentState.estadoMecanico,
+                temperatureStatus = currentState.estadoTemperatura,
+                oilStatus = currentState.estadoAceite,
+                hydraulicStatus = currentState.estadoHidraulico,
+                coolantStatus = currentState.estadoRefrigerante,
+                structuralStatus = currentState.estadoEstructural,
+                expirationDateFireExtinguisher = currentState.vigenciaExtintor,
+                isSynced = false
             )
             saveFormUseCase(form)
             Log.d("FormViewModel", "Formulario guardado localmente. Actualizando UI.")
@@ -172,10 +176,7 @@ class FormViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Resetea el estado de guardado para que la navegación no se dispare de nuevo
-     * si la pantalla se recompone.
-     */
+
     fun onNavigationDone() {
         _uiState.update { it.copy(saveCompleted = false) }
     }

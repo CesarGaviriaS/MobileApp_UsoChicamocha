@@ -6,19 +6,32 @@ import com.google.gson.annotations.SerializedName
 data class MachineDto(
     @SerializedName("id")
     val id: Int,
-    @SerializedName("name")
-    val nombre: String?,
-    @SerializedName("brand")
-    val modelo: String?,
-    @SerializedName("numInterIdentification")
-    val identifier: String?
+    @SerializedName("brand") // Clave JSON del backend
+    val brand: String?,
+    @SerializedName("model") // Clave JSON del backend
+    val model: String?,
+    @SerializedName("name")  // Clave JSON del backend
+    val name: String?,
+    @SerializedName("num_engine") // Clave JSON del backend
+    val engineNumber: String?,
+    @SerializedName("num_inter_identification") // Clave JSON del backend
+    val internalIdentificationNumber: String?,
+    @SerializedName("runt") // Clave JSON del backend
+    val runtExpirationDate: String?,
+    @SerializedName("soat") // Clave JSON del backend
+    val soatExpirationDate: String?
 )
 
 fun MachineDto.toEntity(): MachineEntity {
     return MachineEntity(
         id = id,
-        name = nombre ?: "Sin Nombre",
-        model = modelo ?: "N/A",
-        identifier = identifier ?: "Sin ID"
+        name = name ?: "Default Name", // O manejar el nulo como prefieras
+        brand = brand ?: "Default Brand",
+        model = model ?: "Default Model",
+        engineNumber = engineNumber ?: "Default Engine No.",
+        internalIdentificationNumber = internalIdentificationNumber ?: "Default ID No.",
+        runtExpirationDate = runtExpirationDate, // Puede ser nulo
+        soatExpirationDate = soatExpirationDate  // Puede ser nulo
     )
 }
+
